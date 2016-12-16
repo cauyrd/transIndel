@@ -16,9 +16,11 @@ Getting Soure Code
 Running transIndel 
 -----------------
 STEP 1: Build new BAM file with redefined CIGAR string
-..* analyzing DNA-seq data (whole genome seq/exome-seq/targeted capture)
+* analyzing DNA-seq data (whole genome seq/exome-seq/targeted capture)
+
 	python transIndel_build_DNA.py -i input_bam_file -o output_bam_file [options]
-..* analyzing RNA-seq data 
+* analyzing RNA-seq data 
+
 	python transIndel_build_RNA.py -i input_bam_file -r reference_genome_fasta -g gtf_file -o output_bam_file [options]
 #### Options:
 	 --mapq_cutoff				:minimal MapQ in SAM for supporting reads (default 15)
@@ -34,13 +36,17 @@ STEP 1: Build new BAM file with redefined CIGAR string
 	your output bam	file				:BAM file for CIGAR string redefinement.
 	
 	transIndel generates the following optional fields in output BAMs
-	|Tag|Meaning												|
-	|---|-------------------------------------------------------|
-	|OA	|original representative alignment; format: (pos,CIGAR) |
-	|JM	|splicing junction reads; infered from GTF or splicing motif (used in RNA-seq BAM)|
+
+
+
+Tag | Meaning
+------------ | -------------
+OA | original representative alignment; format: (pos,CIGAR)
+JM | splicing junction reads; infered from GTF or splicing motif (used in RNA-seq BAM)
 
 STEP 2: Call indel
-..* Option 1: using transIndel_call.py script
+* Option 1: using transIndel_call.py script
+
     python transIndel_call.py -i input_bam_from_transIndel_build -o output_vcf_filename_prefix [options]
 #### Options:
 	 -c				:minimal observation count for Indel (default 4)
@@ -55,5 +61,6 @@ STEP 2: Call indel
 	input_bam_file   			:input BAM file is produced by transIndel_build.py
 #### Output:
 	output_vcf_file   			:Reported Indels with VCF format
-..* Option 2: using existing variant caller (e.g. freebayes, GATK)
+* Option 2: using existing variant caller (e.g. freebayes, GATK)
+
 	following the specific variant caller's manual
