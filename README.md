@@ -18,15 +18,16 @@ Running transIndel
 STEP 1: Build new BAM file with redefined CIGAR string
 * analyzing DNA-seq data (whole genome seq/exome-seq/targeted capture)
 
-	python transIndel_build_DNA.py -i input_bam_file -o output_bam_file [options]
+	```python transIndel_build_DNA.py -i input_bam_file -o output_bam_file [options]```
+	
 * analyzing RNA-seq data 
 
-	python transIndel_build_RNA.py -i input_bam_file -r reference_genome_fasta -g gtf_file -o output_bam_file [options]
+	```python transIndel_build_RNA.py -i input_bam_file -r reference_genome_fasta -g gtf_file -o output_bam_file [options]```
 #### Options:
-	 --mapq_cutoff				:minimal MapQ in SAM for supporting reads (default 15)
+	``` --mapq_cutoff				:minimal MapQ in SAM for supporting reads (default 15)
 	 --max_del_length			:maximum deletion length to be detected (default 1Mbp)
 	 -h --help					:produce this menu
-	 -v --version				:show version of this tool
+	 -v --version				:show version of this tool```
 #### Input:
 	input_bam_file   			:input BAM file is produced by BWA-MEM and is sorted and indexed.
 	reference_genome_fasta (for RNA-seq)    				:reference genome in FastA format
