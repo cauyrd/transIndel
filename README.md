@@ -50,20 +50,21 @@ Running transIndel
 	------------ | -------------
 	OA | original representative alignment; format: (pos,CIGAR)
 	JM | splicing junction reads; infered from GTF or splicing motif (used in RNA-seq BAM)
+	
 
 #### STEP 2: Call indel
 * Option 1: using transIndel_call.py script
 	```
-    	python transIndel_call.py -i input_bam_from_transIndel_build -o output_vcf_filename_prefix [options]
+    	python transIndel_call.py -i input_bam_from_transIndel_build -o output_vcf_filename_prefix [options]	
 	```
 #### Options:
 	```
-	 -c				:minimal observation count for Indel (default 4)
-	 -d			:minimal depth to call Indel (default 10)
-	 -f			:minimal variant allele frequency (default 0.1)
-	 -l			:minimal indel length to report (default 10)
-	 -m			:minimal mapq of read from BAM file to call indel (default 15)
-	 -t			:Limit analysis to targets listed in the BED-format FILE or a samtools region string
+	 -c							:minimal observation count for Indel (default 4)
+	 -d							:minimal depth to call Indel (default 10)
+	 -f							:minimal variant allele frequency (default 0.1)
+	 -l							:minimal indel length to report (default 10)
+	 -m							:minimal mapq of read from BAM file to call indel (default 15)
+	 -t							:Limit analysis to targets listed in the BED-format FILE or a samtools region string
 	 -h --help					:produce this menu
 	 -v --version				:show version of this tool
 	 ```
@@ -75,6 +76,7 @@ Running transIndel
 	```
 	output_vcf_file   			:Reported Indels with VCF format
 	```
+	
 * Option 2: using existing variant caller (e.g. freebayes, GATK)
 	```
 	following the specific variant caller's manual
