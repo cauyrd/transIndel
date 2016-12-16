@@ -40,7 +40,7 @@ Running transIndel
 	```
 #### Output:
 	```
-	your output bam	file				:BAM file for CIGAR string redefinement.
+	your_output_bam_file		:BAM file for CIGAR string redefinement.
 	```
 	transIndel generates the following optional fields in output BAMs
 
@@ -55,7 +55,7 @@ Running transIndel
 #### STEP 2: Call indel
 * Option 1: using transIndel_call.py script
 	```
-    	python transIndel_call.py -i input_bam_from_transIndel_build -o output_vcf_filename_prefix [options]	
+	python transIndel_call.py -i input_bam_from_transIndel_build -o output_vcf_filename_prefix [options]	
 	```
 #### Options:
 	```
