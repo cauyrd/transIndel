@@ -77,7 +77,7 @@ Running transIndel
 	output_vcf_file   			:Reported Indels with VCF format
 	```
 	
-* Option 2: using existing variant caller (e.g. freebayes, GATK)
+* Option 2: using existing variant caller (e.g. VarDict, freebayes, GATK)
 	```
 	following the specific variant caller's manual
 	```
