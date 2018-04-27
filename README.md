@@ -12,7 +12,7 @@ Python packages:
 Getting Soure Code
 ------------------
 	git clone git://github.com/cauyrd/transIndel.git
-	cd ScanIndel
+	cd transIndel
 Running transIndel 
 -----------------
 #### STEP 1: Build new BAM file with redefined CIGAR string
