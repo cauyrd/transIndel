@@ -44,7 +44,7 @@ Running transIndel
 	
 	transIndel generates the following optional fields in output BAMs
 
-	Tag| 	Meaning
+	Tag| Meaning
 	--------------------------------------------------------------------------------------
 	OA | original representative alignment; format: (pos,CIGAR)
 	JM | splicing junction reads; infered from GTF or splicing motif (used in RNA-seq BAM)
