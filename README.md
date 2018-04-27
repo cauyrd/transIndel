@@ -6,7 +6,7 @@ Prerequisites
 ----------------
 Samtools/0.1.18 (http://samtools.sourceforge.net/)
 Python packages:
-* Pysam/0.7.7 or newer (https://code.google.com/p/pysam/)
+* Pysam/0.7.7 [newer version may cause problem, will update the code soon for new pysam version) (https://code.google.com/p/pysam/)
 * HTSeq/0.6.1 or newer (https://pypi.python.org/pypi/HTSeq)
 
 Getting Soure Code
@@ -26,28 +26,26 @@ Running transIndel
 	python transIndel_build_RNA.py -i input_bam_file -r reference_genome_fasta -g gtf_file -o output_bam_file [options]
 	```
 #### Options:
-	```
+	
 	--mapq_cutoff				:minimal MapQ in SAM for supporting reads (default 15)
 	--max_del_length			:maximum deletion length to be detected (default 1Mbp)
-	-h --help					:produce this menu
+	-h --help				:produce this menu
 	-v --version				:show version of this tool
-	```
+	
 #### Input:
-	```
-	input_bam_file   						:input BAM file is produced by BWA-MEM and is sorted and indexed.
+	
+	input_bam_file   			:input BAM file is produced by BWA-MEM and is sorted and indexed.
 	reference_genome_fasta (for RNA-seq)    :reference genome in FastA format
-	gtf_file (for RNA-seq)    				:gene annotation file in GTF format
-	```
+	gtf_file (for RNA-seq)    		:gene annotation file in GTF format
+	
 #### Output:
-	```
-	your_output_bam_file		:BAM file for CIGAR string redefinement.
-	```
+	
+	your_output_bam_file			:BAM file for CIGAR string redefinement.
+	
 	transIndel generates the following optional fields in output BAMs
 
-
-
-	Tag | Meaning
-	------------ | -------------
+	Tag| 	Meaning
+	--------------------------------------------------------------------------------------
 	OA | original representative alignment; format: (pos,CIGAR)
 	JM | splicing junction reads; infered from GTF or splicing motif (used in RNA-seq BAM)
 	
@@ -58,24 +56,24 @@ Running transIndel
 	python transIndel_call.py -i input_bam_from_transIndel_build -o output_vcf_filename_prefix [options]	
 	```
 #### Options:
-	```
-	 -c							:minimal observation count for Indel (default 4)
-	 -d							:minimal depth to call Indel (default 10)
-	 -f							:minimal variant allele frequency (default 0.1)
-	 -l							:minimal indel length to report (default 10)
-	 -m							:minimal mapq of read from BAM file to call indel (default 15)
-	 -t							:Limit analysis to targets listed in the BED-format FILE or a samtools region string
-	 -h --help					:produce this menu
+	
+	 -c					:minimal observation count for Indel (default 4)
+	 -d					:minimal depth to call Indel (default 10)
+	 -f					:minimal variant allele frequency (default 0.1)
+	 -l					:minimal indel length to report (default 10)
+	 -m					:minimal mapq of read from BAM file to call indel (default 15)
+	 -t					:Limit analysis to targets listed in the BED-format FILE or a samtools region string
+	 -h --help				:produce this menu
 	 -v --version				:show version of this tool
-	 ```
+	 
 #### Input:
-	```
+	
 	input_bam_file   			:input BAM file is produced by transIndel_build.py
-	```
+	
 #### Output:
-	```
+	
 	output_vcf_file   			:Reported Indels with VCF format
-	```
+	
 	
 * Option 2: using existing variant caller (e.g. VarDict, freebayes, GATK)
 	```
