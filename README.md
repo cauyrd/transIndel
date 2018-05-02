@@ -6,7 +6,7 @@ Prerequisites
 ----------------
 Samtools/0.1.18 (http://samtools.sourceforge.net/)
 Python packages:
-* Pysam/0.7.7 [**newer version may cause problem, will update the code soon for new pysam version**] (https://code.google.com/p/pysam/)
+* Pysam/0.8.4 [**newer version may cause problem, will update the code soon for new pysam version**] (https://code.google.com/p/pysam/)
 * HTSeq/0.6.1 or newer (https://pypi.python.org/pypi/HTSeq)
 
 Getting Soure Code
