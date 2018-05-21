@@ -66,7 +66,7 @@ def sv_scan(input_bam,output_prefix,ao_cutoff,dp_cutoff,vaf_cutoff,indel_len_cut
 			items = line.rstrip().split()
 			regions.append(items[0]+':'+items[1]+'-'+items[2])
 	except IOError:
-		regions = [target]
+		regions = [None]
 	for each_region in regions:
 		try:
 			for col in samfile.pileup(region=each_region):
