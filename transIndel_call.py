@@ -175,6 +175,10 @@ def main():
 		print >> sys.stderr, 'Please specify input bam file and output vcf filename prefix.'
 		usage()
 		sys.exit(1)
+	if indel_len_cutoff == 0:
+		print >> sys.stderr, 'Minimal indel length has to be 1 base'
+		usage()
+		sys.exit(1)
 
 	print 'transIndel call starts running: ' + time.strftime("%Y-%m-%d %H:%M:%S")
 	start = time.time()
