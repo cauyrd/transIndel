@@ -32,8 +32,11 @@ def extract_splice_sites(file, bin):
 		if feature.type == 'exon':
 			iv1 = HTSeq.GenomicInterval(feature.iv.chrom,feature.iv.start-bin,feature.iv.start+bin,'.')
 			iv2 = HTSeq.GenomicInterval(feature.iv.chrom,feature.iv.end-bin,feature.iv.end+bin,'.')
-			cvg[iv1] = 1
-			cvg[iv2] = 1
+			try:
+				cvg[iv1] = 1
+				cvg[iv2] = 1
+			except IndexError:
+				continue
 	return cvg
 
 def detect_softclip_mode(cigarstring):
@@ -145,12 +148,11 @@ def detect_sv_from_cigar(chr, read, mapq_cutoff, max_del_len):
 		return 'NA', []
 	return map(tuple,newcigar), newpos
 
-def softclipping_realignment(mapq_cutoff, max_del_len, input, output, ref_genome, gtf):
+def softclipping_realignment(mapq_cutoff, max_del_len, input, output, ref_genome, gtf, splice_bin):
 	bwa_bam = pysam.Samfile(input,'rb')
 	output_bam = pysam.Samfile(output+'.temp.bam','wb', template=bwa_bam)
 
 	# for RNAseq
-	splice_bin = 20
 	splice_motif = ['GTAG', 'CTAC', 'GCAG', 'CTGC', 'ATAC', 'GTAT']
 	try:
 		fastafile = pysam.Fastafile(ref_genome)
@@ -211,6 +213,7 @@ def usage():
 	print 'Opts:'
 	print ' -r  :reference genome used for analyzing RNAseq data (required)'
 	print ' -g  :gtf gene annotatino file used for analyzing RNAseq data (required)'
+	print ' -s  :splice site half bin size,  default 20'
 	print ' --mapq_cutoff  :minimal MapQ in SAM for support SV event, default 60'
 	print ' --max_del_length  :maximum deletion length to be detected (10e6)'
 	print ' -h --help :produce this menu'
@@ -240,8 +243,9 @@ def main():
 	max_del_len = 10e6
 	ref_genome = ''
 	gtf = ''
+	splice_bin = 20
 	try:
-		opts, args = getopt.getopt(sys.argv[1:], 'i:o:g:r:h:v', ['mapq_cutoff=', 'max_del_length=', 'help', 'version'])
+		opts, args = getopt.getopt(sys.argv[1:], 'i:o:g:r:s:h:v', ['mapq_cutoff=', 'max_del_length=', 'help', 'version'])
 		if not opts:
 			print "Please use the -h or --help option to get usage information."
 			sys.exit(0)
@@ -254,6 +258,7 @@ def main():
 		elif o == '-o': output = a
 		elif o == '-r': ref_genome = a
 		elif o == '-g': gtf = a
+		elif o == '-s': splice_bin = int(a)
 		elif o == '--mapq_cutoff': mapq_cutoff = int(a)
 		elif o == '--max_del_length': max_del_len = int(a)
 		elif o in ('-v', '--version'):
@@ -276,7 +281,7 @@ def main():
 	external_tool_checking()
 
 	# CIGAR string refinement or add SV tag 
-	softclipping_realignment(mapq_cutoff, max_del_len, input, output, ref_genome, gtf)
+	softclipping_realignment(mapq_cutoff, max_del_len, input, output, ref_genome, gtf, splice_bin)
 
 	os.system('rm '+output+'.temp.*')
 	print "transIndel_RNA build running done: " + time.strftime("%Y-%m-%d %H:%M:%S")
