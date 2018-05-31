@@ -29,6 +29,7 @@ Running transIndel
 	
 	--mapq_cutoff				:minimal MapQ in SAM for supporting reads (default 15)
 	--max_del_length			:maximum deletion length to be detected (default 1Mbp)
+	-s 					:splice site half bin size,  default 20
 	-h --help				:produce this menu
 	-v --version				:show version of this tool
 	
