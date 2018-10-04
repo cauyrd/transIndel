@@ -21,7 +21,7 @@ except: sys.exit('pysam module not found.\nPlease install it before.')
 try: import numpy as np
 except: sys.exit('numpy module not found.\nPlease install it before.')
 
-__version__ = 'v0.1'
+__version__ = 'v1.0'
 
 def detect_softclip_mode(cigarstring):
 	# if cigarstring is 40M25N5M then cigartuple is [('40', 'M'), ('25', 'N'), ('5', 'M')] with the statement below
@@ -150,13 +150,11 @@ def softclipping_realignment(mapq_cutoff, max_del_len, input, output):
 	bwa_bam.close()
 	output_bam.close()
 	try:
-		subprocess.check_call("samtools sort "+output+".temp.bam "+output+".temp.sorted", shell=True)
+		subprocess.check_call("samtools sort {0}.temp.bam -o {0}".format(output), shell=True)
 	except subprocess.CalledProcessError as e:
 		print >> sys.stderr, 'Execution failed for samtools:', e
 		sys.exit(1)
-
-	subprocess.check_call("mv "+output+".temp.sorted.bam "+output, shell=True)
-	subprocess.check_call("samtools index "+output, shell=True)
+	subprocess.check_call("samtools index {}".format(output), shell=True)
 
 def usage():
 	"""helping information"""
@@ -182,6 +180,18 @@ def external_tool_checking():
 			print >> sys.stderr, "Exiting."
 			sys.exit(0)
 		print "Checking for '" + each + "': found " + path
+	return path.rstrip()
+
+def version_checking(samtools_path):
+	'''HTSlib-based Samtools is needed!
+	'''
+	try:
+		response = subprocess.check_output('{} --version-only'.format(samtools_path), shell=True, stderr=subprocess.STDOUT)
+	except subprocess.CalledProcessError:
+		print >> sys.stderr, "HTSlib-based Samtools is not available, please install latest Samtools at http://www.htslib.org/"
+		print >> sys.stderr, "Exiting."
+		sys.exit(0)
+
 
 def main():
 
@@ -221,8 +231,8 @@ def main():
 	start = time.time()
 
 	#check external tools used
-	external_tool_checking()
-
+	path = external_tool_checking()
+	version_checking(path)
 	# CIGAR string refinement or add SV tag 
 	softclipping_realignment(mapq_cutoff, max_del_len, input, output)
 

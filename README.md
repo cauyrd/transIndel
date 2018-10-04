@@ -4,7 +4,7 @@ transIndel is used to detect indels (insertions and deletions) from DNA-seq or R
 
 Prerequisites
 ----------------
-Samtools/0.1.18 (http://samtools.sourceforge.net/)
+Samtools/1.0 or newer (http://samtools.sourceforge.net/)
 Python packages:
 * Pysam/0.13.0 or newer (https://code.google.com/p/pysam/)
 * HTSeq/0.6.1 or newer (https://pypi.python.org/pypi/HTSeq)
