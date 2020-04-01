@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 #-*- coding: utf-8 -*-
 #===============================================================================
 #
@@ -21,7 +21,7 @@ except: sys.exit('pysam module not found.\nPlease install it before.')
 try: import numpy as np
 except: sys.exit('numpy module not found.\nPlease install it before.')
 
-__version__ = 'v1.0'
+__version__ = 'v1.1'
 
 def detect_softclip_mode(cigarstring):
 	# if cigarstring is 40M25N5M then cigartuple is [('40', 'M'), ('25', 'N'), ('5', 'M')] with the statement below
