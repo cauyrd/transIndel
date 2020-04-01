@@ -21,7 +21,7 @@ except: sys.exit('pysam module not found.\nPlease install it before.')
 #try: import numpy as np
 #except: sys.exit('numpy module not found.\nPlease install it before.')
 
-__version__ = 'v0.1'
+__version__ = 'v1.1'
 
 def vcf_header(output_prefix):
 	header = ['##fileformat=VCFv4.1']

@@ -23,7 +23,7 @@ except: sys.exit('pysam module not found.\nPlease install it before.')
 try: import HTSeq
 except: sys.exit('HTSeq module not found.\nPlease install it before.')
 
-__version__ = 'v1.0'
+__version__ = 'v1.1'
 
 def extract_splice_sites(file, bin):
 	gtf_file = HTSeq.GFF_Reader(file)
