@@ -1,4 +1,5 @@
-#!/usr/bin/python
+#!/usr/bin/env python
+from __future__ import print_function
 #-*- coding: utf-8 -*-
 #===============================================================================
 #
@@ -23,7 +24,7 @@ except: sys.exit('pysam module not found.\nPlease install it before.')
 try: import HTSeq
 except: sys.exit('HTSeq module not found.\nPlease install it before.')
 
-__version__ = 'v1.0'
+__version__ = 'v1.2'
 
 def extract_splice_sites(file, bin):
 	gtf_file = HTSeq.GFF_Reader(file)
@@ -146,7 +147,7 @@ def detect_sv_from_cigar(chr, read, mapq_cutoff, max_del_len):
 			return 'NA', []
 	else:
 		return 'NA', []
-	return map(tuple,newcigar), newpos
+	return list(map(tuple,newcigar)), newpos
 
 def softclipping_realignment(mapq_cutoff, max_del_len, input, output, ref_genome, gtf, splice_bin):
 	bwa_bam = pysam.Samfile(input,'rb')
@@ -157,12 +158,12 @@ def softclipping_realignment(mapq_cutoff, max_del_len, input, output, ref_genome
 	try:
 		fastafile = pysam.Fastafile(ref_genome)
 	except IOError as e:
-		print 'read reference genome '+ref_genome+' error!',e
+		print('read reference genome '+ref_genome+' error!',e)
 		sys.exit(1)
 	try:
 		cvg = extract_splice_sites(gtf, splice_bin)
 	except IOError as e:
-		print 'read GTF file '+gtf+' error!',e
+		print('read GTF file '+gtf+' error!',e)
 		sys.exit(1)
 
 	try:
@@ -193,56 +194,59 @@ def softclipping_realignment(mapq_cutoff, max_del_len, input, output, ref_genome
 					read.setTag('OA', str(old_pos+1)+','+old_cigarstring)
 			output_bam.write(read)
 	except ValueError as e:
-		print >> sys.stderr, 'Bam index file is not found!', e
+		print('Bam index file is not found!', e, file=sys.stderr)
 		sys.exit(1)
 	bwa_bam.close()
 	output_bam.close()
 	try:
 		subprocess.check_call("samtools sort {0}.temp.bam -o {0}".format(output), shell=True)
 	except subprocess.CalledProcessError as e:
-		print >> sys.stderr, 'Execution failed for samtools:', e
+		print('Execution failed for samtools:', e, file=sys.stderr)
 		sys.exit(1)
 
 	subprocess.check_call("samtools index {}".format(output), shell=True)
 
 def usage():
 	"""helping information"""
-	print 'Usage:'
-	print ' python transIndel_build_RNA.py -i input_bam_file -o output_bam_file[opts]'
-	print 'Opts:'
-	print ' -r  :reference genome used for analyzing RNAseq data (required)'
-	print ' -g  :gtf gene annotatino file used for analyzing RNAseq data (required)'
-	print ' -s  :splice site half bin size,  default 20'
-	print ' --mapq_cutoff  :minimal MapQ in SAM for support SV event, default 60'
-	print ' --max_del_length  :maximum deletion length to be detected (10e6)'
-	print ' -h --help :produce this menu'
-	print ' -v --version :show version of this tool'
-	print 'author: Rendong Yang <yang4414@umn.edu>, MSI, University of Minnesota, 2014'
-	print 'version: ' + __version__
+	print('Usage:')
+	print(' python transIndel_build_RNA.py -i input_bam_file -o output_bam_file[opts]')
+	print('Opts:')
+	print(' -r  :reference genome used for analyzing RNAseq data (required)')
+	print(' -g  :gtf gene annotatino file used for analyzing RNAseq data (required)')
+	print(' -s  :splice site half bin size,  default 20')
+	print(' --mapq_cutoff  :minimal MapQ in SAM for support SV event, default 60')
+	print(' --max_del_length  :maximum deletion length to be detected (10e6)')
+	print(' -h --help :produce this menu')
+	print(' -v --version :show version of this tool')
+	print('author: Rendong Yang <yang4414@umn.edu>, MSI, University of Minnesota, 2014')
+	print('version: ' + __version__)
 
 def external_tool_checking():
 	"""checking dependencies are installed"""
-	software = ['samtools']
+	software = ["samtools"]
 	cmd = "which"
 	for each in software:
 		try:
 			path = subprocess.check_output([cmd, each], stderr=subprocess.STDOUT)
+			path = "" + str(path) 
 		except subprocess.CalledProcessError:
-			print >> sys.stderr, "Checking for '" + each + "': ERROR - could not find '" + each + "'"
-			print >> sys.stderr, "Exiting."
-			sys.exit(0)
-		print "Checking for '" + each + "': found " + path
+			print("Checking for '" + each + "': ERROR - could not find '" + each + "'", file=sys.stderr)
+			print("Exiting.", file=sys.stderr)
+			sys.exit(1)
+		print("Checking for " + each + ": found " + path)
 	return path.rstrip()
 
 def version_checking(samtools_path):
 	'''HTSlib-based Samtools is needed!
 	'''
 	try:
-		response = subprocess.check_output('{} --version-only'.format(samtools_path), shell=True, stderr=subprocess.STDOUT)
+		# response = subprocess.check_output("{} --version-only".format(samtools_path), shell=True, stderr=subprocess.STDOUT)
+                
+		response = subprocess.check_output(["", samtools_path, "--version-only"], shell=True, stderr=subprocess.STDOUT)
 	except subprocess.CalledProcessError:
-		print >> sys.stderr, "HTSlib-based Samtools is not available, please install latest Samtools at http://www.htslib.org/"
-		print >> sys.stderr, "Exiting."
-		sys.exit(0)
+		print("HTSlib-based Samtools is not available, please install latest Samtools at http://www.htslib.org/", file=sys.stderr)
+		print("Exiting.", file=sys.stderr)
+		sys.exit(1)
 
 
 def main():
@@ -258,10 +262,10 @@ def main():
 	try:
 		opts, args = getopt.getopt(sys.argv[1:], 'i:o:g:r:s:h:v', ['mapq_cutoff=', 'max_del_length=', 'help', 'version'])
 		if not opts:
-			print "Please use the -h or --help option to get usage information."
+			print("Please use the -h or --help option to get usage information.")
 			sys.exit(0)
 	except getopt.GetoptError as err:
-		print >> sys.stderr, err
+		print(err, file=sys.stderr)
 		usage()
 		sys.exit(2)
 	for o, a in opts:
@@ -273,7 +277,7 @@ def main():
 		elif o == '--mapq_cutoff': mapq_cutoff = int(a)
 		elif o == '--max_del_length': max_del_len = int(a)
 		elif o in ('-v', '--version'):
-			print 'transIndel ' + __version__
+			print('transIndel ' + __version__)
 			sys.exit(0)
 		elif o in ('-h', '--help'):
 			usage()
@@ -281,11 +285,11 @@ def main():
 		else:
 			assert False, "unhandled option"
 	if not input or not output:
-		print >> sys.stderr, 'Please specify -i and -o for input and output files.'
+		print('Please specify -i and -o for input and output files.', file=sys.stderr)
 		usage()
 		sys.exit(1)
 
-	print 'transIndel_RNA build starts running: ' + time.strftime("%Y-%m-%d %H:%M:%S")
+	print('transIndel_RNA build starts running: ' + time.strftime("%Y-%m-%d %H:%M:%S"))
 	start = time.time()
 
 	#check external tools used
@@ -296,9 +300,9 @@ def main():
 	softclipping_realignment(mapq_cutoff, max_del_len, input, output, ref_genome, gtf, splice_bin)
 
 	os.system('rm '+output+'.temp.*')
-	print "transIndel_RNA build running done: " + time.strftime("%Y-%m-%d %H:%M:%S")
+	print("transIndel_RNA build running done: " + time.strftime("%Y-%m-%d %H:%M:%S"))
 	end = time.time()
-	print 'transIndel_RNA build takes ' + str(end - start) + ' seconds.'
+	print('transIndel_RNA build takes ' + str(end - start) + ' seconds.')
 
 if __name__ == '__main__':
 	main()
