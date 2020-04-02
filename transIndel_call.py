@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+from __future__ import print_function
 #-*- coding: utf-8 -*-
 #===============================================================================
 #
@@ -21,7 +22,7 @@ except: sys.exit('pysam module not found.\nPlease install it before.')
 #try: import numpy as np
 #except: sys.exit('numpy module not found.\nPlease install it before.')
 
-__version__ = 'v1.1'
+__version__ = 'v1.2'
 
 def vcf_header(output_prefix):
 	header = ['##fileformat=VCFv4.1']
@@ -58,7 +59,7 @@ def sv_scan(input_bam,output_prefix,ref_genome,ao_cutoff,dp_cutoff,vaf_cutoff,in
 	samfile = pysam.Samfile(input_bam,'rb')
 	fastafile = pysam.Fastafile(ref_genome) if ref_genome else None 
 	vcffile = open(output_prefix+'.indel.vcf','w',0)
-	print >> vcffile, vcf_header(output_prefix)
+	print(vcf_header(output_prefix), file=vcffile)
 	vcf_field_gt = 'GT\t1/1'	
 	regions = []
 	try:
@@ -114,7 +115,7 @@ def sv_scan(input_bam,output_prefix,ref_genome,ao_cutoff,dp_cutoff,vaf_cutoff,in
 						chr2 = col.reference_name if sv_type != 'TRA' else sv_length.split(':')[0]
 						sv_length = sv_length if sv_type != 'TRA' else '0'
 						vcf_field_info = 'NS=1;AO='+str(ao)+';DP='+str(dp)+';AB='+str(vaf)+';SVLEN='+sv_length+';SVTYPE='+sv_type+';SVMETHOD=transIndel_ALN;CHR2='+chr2+';END='+str(end)
-						print >> vcffile, col.reference_name+'\t'+sv_pos+'\t.\t'+sv_dict[sv_id][0]+'\t'+sv_dict[sv_id][1]+'\t.\t.\t'+vcf_field_info+'\t'+vcf_field_gt
+						print(col.reference_name+'\t'+sv_pos+'\t.\t'+sv_dict[sv_id][0]+'\t'+sv_dict[sv_id][1]+'\t.\t.\t'+vcf_field_info+'\t'+vcf_field_gt, file=vcffile)
 		except ValueError:
 			continue
 	samfile.close()
@@ -122,20 +123,20 @@ def sv_scan(input_bam,output_prefix,ref_genome,ao_cutoff,dp_cutoff,vaf_cutoff,in
 
 def usage():
 	"""helping information"""
-	print 'Usage:'
-	print ' python transIndel_call.py -i input_bam_from_transIndel_build -o output_vcf_filename_prefix [opts]'
-	print 'Opts:'
-	print ' -r  :reference genome used for VCF REF column (required for valid VCF)'
-	print ' -c  :minimal observation count for Indel (default 4)'
-	print ' -d  :minimal depth to call Indel (default 10)'
-	print ' -f  :minimal variant allele frequency (default 0.1)'
-	print ' -l  :minimal indel length to report (default 10)'
-	print ' -m  :minimal mapq of read from BAM file to call indel (default 15)'
-	print ' -t  :Limit analysis to targets listed in the BED-format FILE or a samtools region string'
-	print ' -h --help :produce this menu'
-	print ' -v --version :show version of this tool'
-	print 'author: Rendong Yang <yang4414@umn.edu>, MSI, University of Minnesota, 2014'
-	print 'version: ' + __version__
+	print('Usage:')
+	print(' python transIndel_call.py -i input_bam_from_transIndel_build -o output_vcf_filename_prefix [opts]')
+	print('Opts:')
+	print(' -r  :reference genome used for VCF REF column (required for valid VCF)')
+	print(' -c  :minimal observation count for Indel (default 4)')
+	print(' -d  :minimal depth to call Indel (default 10)')
+	print(' -f  :minimal variant allele frequency (default 0.1)')
+	print(' -l  :minimal indel length to report (default 10)')
+	print(' -m  :minimal mapq of read from BAM file to call indel (default 15)')
+	print(' -t  :Limit analysis to targets listed in the BED-format FILE or a samtools region string')
+	print(' -h --help :produce this menu')
+	print(' -v --version :show version of this tool')
+	print('author: Rendong Yang <yang4414@umn.edu>, MSI, University of Minnesota, 2014')
+	print('version: ' + __version__)
 
 def main():
 
@@ -152,10 +153,10 @@ def main():
 	try:
 		opts, args = getopt.getopt(sys.argv[1:], 'i:o:r:c:d:f:l:m:t:h:v', ['help', 'version'])
 		if not opts:
-			print "Please use the -h or --help option to get usage information."
+			print("Please use the -h or --help option to get usage information.")
 			sys.exit(0)
 	except getopt.GetoptError as err:
-		print >> sys.stderr, err
+		print(err, file=sys.stderr)
 		usage()
 		sys.exit(2)
 	for o, a in opts:
@@ -169,7 +170,7 @@ def main():
 		elif o == '-m': mapq_cutoff = int(a)
 		elif o == '-t': target = a
 		elif o in ('-v', '--version'):
-			print 'transIndel' + __version__
+			print('transIndel' + __version__)
 			sys.exit(0)
 		elif o in ('-h', '--help'):
 			usage()
@@ -177,20 +178,20 @@ def main():
 		else:
 			assert False, "unhandled option"
 	if not input_bam or not output_vcf_prefix:
-		print >> sys.stderr, 'Please specify input bam file and output vcf filename prefix.'
+		print('Please specify input bam file and output vcf filename prefix.', file=sys.stderr)
 		usage()
 		sys.exit(1)
 	if indel_len_cutoff == 0:
-		print >> sys.stderr, 'Minimal indel length has to be 1 base'
+		print('Minimal indel length has to be 1 base', file=sys.stderr)
 		usage()
 		sys.exit(1)
 
-	print 'transIndel call starts running: ' + time.strftime("%Y-%m-%d %H:%M:%S")
+	print('transIndel call starts running: ' + time.strftime("%Y-%m-%d %H:%M:%S"))
 	start = time.time()
 	sv_scan(input_bam, output_vcf_prefix, ref_genome, ao_cutoff, dp_cutoff, vaf_cutoff, indel_len_cutoff, target, mapq_cutoff)
-	print "transIndel call running done: " + time.strftime("%Y-%m-%d %H:%M:%S")
+	print("transIndel call running done: " + time.strftime("%Y-%m-%d %H:%M:%S"))
 	end = time.time()
-	print 'transIndel call takes ' + str(end - start) + ' seconds.'
+	print('transIndel call takes ' + str(end - start) + ' seconds.')
 
 if __name__ == '__main__':
 	main()
