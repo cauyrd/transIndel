@@ -4,9 +4,10 @@ transIndel is used to detect indels (insertions and deletions) from DNA-seq or R
 
 Prerequisites
 ----------------
-Samtools/1.0 or newer (http://samtools.sourceforge.net/)
+Samtools/1.0 or newer (http://www.htslib.org/)
+Python 3.6 or newer (https://www.python.org/)
 Python packages:
-* Pysam/0.13.0 or newer (https://code.google.com/p/pysam/)
+* Pysam/0.13.0 or newer (https://pypi.org/project/pysam)
 * HTSeq/0.6.1 or newer (https://pypi.python.org/pypi/HTSeq)
 
 Getting Soure Code
@@ -26,12 +27,20 @@ Running transIndel
 	python transIndel_build_RNA.py -i input_bam_file -r reference_genome_fasta -g gtf_file -o output_bam_file [options]
 	```
 #### Options:
-	
-	--mapq_cutoff				:minimal MapQ in SAM for supporting reads (default 15)
-	--max_del_length			:maximum deletion length to be detected (default 1Mbp)
-	-s 					:splice site half bin size,  default 20
-	-h --help				:produce this menu
-	-v --version				:show version of this tool
+	-h, --help            show this help message and exit
+	-i INPUT, --input INPUT
+	                    Input BAM file
+	-o OUTPUT, --output OUTPUT
+	                    Output BAM file
+	-r REF, --ref REF     reference genome used for analyzing RNA-seq data
+	-g GTF, --gtf GTF     gene annotatino file used for analyzing RNA-seq data
+	-s SPLICE_BIN, --splice_bin SPLICE_BIN
+	                    splice site half bin size (default: 20)
+	-m MAPQ, --mapq MAPQ  minimal MAPQ of read from BAM file for supporting
+	                    Indel (default: 15)
+	-l LENGTH, --length LENGTH
+	                     Maximum deletion length to be detected (default:1000000)
+	-v, --version         show program's version number and exit
 	
 #### Input:
 	
@@ -57,16 +66,23 @@ Running transIndel
 	python transIndel_call.py -i input_bam_from_transIndel_build -o output_vcf_filename_prefix [options]	
 	```
 #### Options:
-	
-	 -c					:minimal observation count for Indel (default 4)
-	 -d					:minimal depth to call Indel (default 10)
-	 -f					:minimal variant allele frequency (default 0.1)
-	 -l					:minimal indel length to report (default 10)
-	 -m					:minimal mapq of read from BAM file to call indel (default 15)
-	 -t					:Limit analysis to targets listed in the BED-format FILE or a samtools region string
-	 -h --help				:produce this menu
-	 -v --version				:show version of this tool
-	 
+	-h, --help            show this help message and exit
+	-i INPUT, --input INPUT
+	                        Input BAM file
+	-o OUTPUT, --output OUTPUT
+	                    output VCF file prefix
+	-c AO, --ao AO        minimal observation count for Indel (default: 4)
+	-d DEPTH, --depth DEPTH
+	                 minimal depth to call Indel (default: 10)
+	-f VAF, --vaf VAF     minimal variant allele frequency (default: 0.1)
+	-l LENGTH, --length LENGTH
+	                 minimal Indel length (>=1) to report (default: 10)
+	-m MAPQ, --mapq MAPQ  minimal MAPQ of read from BAM file to call Indel
+	                 (default: 15)
+	-t REGION             Limit analysis to targets listed in the BED-format
+	                 FILE or a samtools region string
+	-v, --version         show program's version number and exit
+
 #### Input:
 	
 	input_bam_file   			:input BAM file is produced by transIndel_build.py
@@ -74,7 +90,6 @@ Running transIndel
 #### Output:
 	
 	output_vcf_file   			:Reported Indels with VCF format
-	
 	
 * Option 2: using existing variant caller (e.g. VarDict, freebayes, GATK)
 	```
