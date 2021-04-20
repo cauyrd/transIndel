@@ -16,7 +16,7 @@ try:
 except:
     sys.exit('HTSeq module not found.\nPlease install it before.')
 
-__version__ = 'v2.0'
+__version__ = 'v2.1'
 
 
 def remove(infile):
@@ -158,6 +158,19 @@ def detect_sv_from_cigar(chrm, read, mapq_cutoff, max_del_len):
     return list(map(tuple, newcigar)), newpos
 
 
+def splice_checker(fastafile, chrm, junc_start, junc_end, strand, bin_size=2):
+    flag = False
+    splice_motif = ['GTAG', 'CTAC', 'GCAG', 'CTGC', 'ATAC', 'GTAT']
+    for i in range(-bin_size, bin_size+1):
+        m1 = fastafile.fetch(chrm, junc_start + i, junc_start+2 + i)
+        m2 = fastafile.fetch(chrm, junc_end-2 + i, junc_end + i)
+        motif = m1.upper() + m2.upper()
+        if motif in splice_motif:
+            flag = True
+            break
+    return flag
+
+
 def softclipping_realignment(mapq_cutoff, max_del_len, input, output, ref_genome, gtf, splice_bin):
     bwa_bam = pysam.AlignmentFile(input, 'rb')
     output_bam = pysam.AlignmentFile('{}.temp.bam'.format(output), 'wb', template=bwa_bam)
@@ -192,6 +205,11 @@ def softclipping_realignment(mapq_cutoff, max_del_len, input, output, ref_genome
                         junc_start, junc_end = read.blocks[0][1], read.blocks[1][0]
                         htpos1 = HTSeq.GenomicPosition(chrm, junc_start, '.')
                         htpos2 = HTSeq.GenomicPosition(chrm, junc_end, '.')
+                        if splice_checker(fastafile, chrm, junc_start, junc_end, strand):
+                            read.cigar, read.pos = old_cigar, old_pos
+                            read.setTag('JM', 'shift')
+                            output_bam.write(read)
+                            continue
                         if cvg[htpos1] > 0 or cvg[htpos2] > 0:
                             read.cigar, read.pos = old_cigar, old_pos
                             read.setTag('JM', 'GTF')
