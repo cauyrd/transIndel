@@ -18,6 +18,9 @@ except:
 
 __version__ = 'v2.0'
 
+def remove(infile):
+    if os.path.isfile(infile):
+        os.remove(infile)
 
 def detect_softclip_mode(cigarstring):
     # if cigarstring is 40M25N5M then cigartuple is [('40', 'M'), ('25', 'N'), ('5', 'M')] with the statement below
