@@ -231,7 +231,7 @@ def main():
     # CIGAR string refinement or add SV tag
     softclipping_realignment(options.mapq, options.length, options.input, options.output)
 
-    remove('{}.temp.bam'.format(output))
+    remove('{}.temp.bam'.format(options.output))
     print("transIndel build running done: " + time.strftime("%Y-%m-%d %H:%M:%S"))
     end = time.time()
     print('transIndel build takes ' + str(end - start) + ' seconds.')
